@@ -1,0 +1,191 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  roll_no        String    @id @db.VarChar(20)
+  name           String    @db.VarChar(100)
+  phone          String    @unique @db.VarChar(15)
+  password_hash  String    @db.VarChar(255)
+  room_no        String?   @db.VarChar(10)
+  hostel_id      Int?
+  last_login     DateTime?
+  otp            String?   @db.VarChar(6)
+  otp_expiry     DateTime?
+  created_at     DateTime  @default(now())
+
+  hostel              Hostel?          @relation(fields: [hostel_id], references: [hostel_id])
+  packages            Package[]        @relation("StudentPackages")
+  delivered_packages  Package[]        @relation("DeliveredPackages")
+  sent_friendships    Friendship[]     @relation("FriendshipRequester")
+  received_friendships Friendship[]   @relation("FriendshipReceiver")
+  authorized_pickups  PickupAuth[]     @relation("AuthorizedBy")
+  received_pickups    PickupAuth[]     @relation("AuthorizedTo")
+  notifications       Notification[]
+  group_memberships   GroupMember[]
+
+  @@map("students")
+}
+
+model Hostel {
+  hostel_id Int    @id @default(autoincrement())
+  name      String @db.VarChar(100)
+  address   String @db.VarChar(255)
+
+  students Student[]
+
+  @@map("hostels")
+}
+
+model Admin {
+  admin_id      Int      @id @default(autoincrement())
+  name          String   @db.VarChar(100)
+  phone         String   @unique @db.VarChar(15)
+  password_hash String   @db.VarChar(255)
+  created_at    DateTime @default(now())
+
+  logged_packages Package[]
+
+  @@map("admins")
+}
+
+model EcommercePlatform {
+  platform_id String @id @db.VarChar(30)
+  name        String @db.VarChar(100)
+  location    String @db.VarChar(255)
+
+  packages Package[]
+
+  @@map("ecommerce_platforms")
+}
+
+model Package {
+  package_id       String        @id @db.VarChar(50)
+  roll_no          String        @db.VarChar(20)
+  platform_id      String?       @db.VarChar(30)
+  status           PackageStatus @default(PENDING)
+  arrival_datetime DateTime      @default(now())
+  pickup_deadline  DateTime
+  delivered_at     DateTime?
+  delivered_to     String?       @db.VarChar(20)
+  logged_by_admin  Int?
+  description      String?       @db.VarChar(255)
+  created_at       DateTime      @default(now())
+
+  student      Student            @relation("StudentPackages", fields: [roll_no], references: [roll_no])
+  platform     EcommercePlatform? @relation(fields: [platform_id], references: [platform_id])
+  delivered_to_student Student?  @relation("DeliveredPackages", fields: [delivered_to], references: [roll_no])
+  admin        Admin?             @relation(fields: [logged_by_admin], references: [admin_id])
+  pickup_auths PickupAuth[]
+  notifications Notification[]
+
+  @@map("packages")
+}
+
+model Friendship {
+  friendship_id Int              @id @default(autoincrement())
+  requester_id  String           @db.VarChar(20)
+  receiver_id   String           @db.VarChar(20)
+  status        FriendshipStatus @default(PENDING)
+  created_at    DateTime         @default(now())
+
+  requester Student @relation("FriendshipRequester", fields: [requester_id], references: [roll_no])
+  receiver  Student @relation("FriendshipReceiver", fields: [receiver_id], references: [roll_no])
+
+  @@unique([requester_id, receiver_id])
+  @@map("friendships")
+}
+
+model PickupAuth {
+  auth_id        Int              @id @default(autoincrement())
+  package_id     String           @db.VarChar(50)
+  authorized_by  String           @db.VarChar(20)
+  authorized_to  String           @db.VarChar(20)
+  status         PickupAuthStatus @default(PENDING)
+  expires_at     DateTime
+  created_at     DateTime         @default(now())
+
+  package     Package @relation(fields: [package_id], references: [package_id])
+  owner       Student @relation("AuthorizedBy", fields: [authorized_by], references: [roll_no])
+  friend      Student @relation("AuthorizedTo", fields: [authorized_to], references: [roll_no])
+
+  @@map("pickup_auths")
+}
+
+model Notification {
+  notif_id   Int              @id @default(autoincrement())
+  roll_no    String           @db.VarChar(20)
+  package_id String?          @db.VarChar(50)
+  type       NotificationType
+  message    String           @db.VarChar(500)
+  is_read    Boolean          @default(false)
+  sent_at    DateTime         @default(now())
+
+  student Student  @relation(fields: [roll_no], references: [roll_no])
+  package Package? @relation(fields: [package_id], references: [package_id])
+
+  @@map("notifications")
+}
+
+model CommunityGroup {
+  group_id   Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  hostel_id  Int?
+  created_at DateTime @default(now())
+
+  members GroupMember[]
+
+  @@map("community_groups")
+}
+
+model GroupMember {
+  id         Int      @id @default(autoincrement())
+  group_id   Int
+  roll_no    String   @db.VarChar(20)
+  joined_at  DateTime @default(now())
+  opt_in_community Boolean @default(true)
+
+  group   CommunityGroup @relation(fields: [group_id], references: [group_id])
+  student Student        @relation(fields: [roll_no], references: [roll_no])
+
+  @@unique([group_id, roll_no])
+  @@map("group_members")
+}
+
+enum PackageStatus {
+  PENDING
+  COLLECTED
+  OVERDUE
+  RETURNING
+  RETURNED
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum PickupAuthStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  USED
+}
+
+enum NotificationType {
+  ARRIVAL
+  DEADLINE_WARNING
+  PICKUP_AUTHORIZED
+  PICKUP_CONFIRMED
+  FRIEND_REQUEST
+  RETURNING
+}
