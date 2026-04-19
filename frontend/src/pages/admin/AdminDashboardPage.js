@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Clock, CheckCircle2, AlertTriangle, RotateCcw, ArrowRight, PlusCircle } from 'lucide-react';
+import { Package, Clock, CheckCircle2, AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react';
 import { packageAPI } from '../../lib/api';
 import { formatDate, getStatusConfig } from '../../lib/utils';
 
@@ -47,12 +47,11 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Package} label="Total" value={stats?.total ?? 0} color="bg-muted text-muted-foreground" />
         <StatCard icon={Clock} label="Pending" value={stats?.pending ?? 0} color="bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400" />
         <StatCard icon={CheckCircle2} label="Collected" value={stats?.collected ?? 0} color="bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" />
         <StatCard icon={AlertTriangle} label="Overdue" value={stats?.overdue ?? 0} color="bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400" />
-        <StatCard icon={RotateCcw} label="Returning" value={stats?.returning ?? 0} color="bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400" />
       </div>
 
       {/* Recent packages */}

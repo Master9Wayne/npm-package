@@ -130,7 +130,13 @@ async function adminGetPackages(req, res) {
         include: {
           student: { select: { name: true, roll_no: true, phone: true, room_no: true, hostel: true } },
           platform: true,
-          admin: { select: { name: true } }
+          admin: { select: { name: true } },
+          pickup_auths: {
+            where: { status: { in: ['PENDING', 'ACCEPTED'] } },
+            select: { auth_id: true, authorized_to: true, status: true },
+            orderBy: { created_at: 'desc' },
+            take: 1
+          }
         },
         orderBy: { arrival_datetime: 'desc' },
         skip,

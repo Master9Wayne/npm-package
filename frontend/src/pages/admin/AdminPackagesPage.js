@@ -3,7 +3,7 @@ import { Search, Filter, CheckCircle2, Loader2, Package } from 'lucide-react';
 import { packageAPI } from '../../lib/api';
 import { formatDate, formatDateShort, getStatusConfig, getDeadlineInfo } from '../../lib/utils';
 
-const STATUS_FILTERS = ['ALL', 'PENDING', 'COLLECTED', 'OVERDUE', 'RETURNING', 'RETURNED'];
+const STATUS_FILTERS = ['ALL', 'PENDING', 'COLLECTED', 'OVERDUE'];
 
 export default function AdminPackagesPage() {
   const [packages, setPackages] = useState([]);
@@ -38,6 +38,30 @@ export default function AdminPackagesPage() {
       load();
     } catch (e) { console.error(e); }
     finally { setCollectLoading(false); }
+  }
+
+  // Derive the effective status for display: if the deadline is past and the DB
+  // still says PENDING (cron hasn't run yet), treat it as OVERDUE in the UI.
+  function getEffectiveStatus(pkg) {
+    if (pkg.status === 'PENDING' && new Date(pkg.pickup_deadline) < new Date()) {
+      return 'OVERDUE';
+    }
+    return pkg.status;
+  }
+
+  // Always show deadline relative info for uncollected packages; highlight red if past.
+  function getDeadlineCell(pkg) {
+    const effectiveStatus = getEffectiveStatus(pkg);
+    if (effectiveStatus === 'COLLECTED') {
+      return <span className="text-muted-foreground">{formatDateShort(pkg.pickup_deadline)}</span>;
+    }
+    const info = getDeadlineInfo(pkg.pickup_deadline);
+    return (
+      <span className={`font-medium ${info.urgent ? 'text-red-500' : info.color}`}>
+        {formatDateShort(pkg.pickup_deadline)}
+        <span className="block text-xs font-normal">{info.label}</span>
+      </span>
+    );
   }
 
   return (
@@ -82,15 +106,19 @@ export default function AdminPackagesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  {['Package ID', 'Student', 'Hostel/Room', 'Platform', 'Arrived', 'Deadline', 'Status', 'Action'].map(h => (
+                  {['Package ID', 'Student', 'Hostel/Room', 'Platform', 'Arrived', 'Deadline', 'Authorised', 'Status', 'Action'].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-medium text-muted-foreground whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {packages.map(pkg => {
-                  const status = getStatusConfig(pkg.status);
-                  const deadline = pkg.status === 'PENDING' ? getDeadlineInfo(pkg.pickup_deadline) : null;
+                  const effectiveStatus = getEffectiveStatus(pkg);
+                  const status = getStatusConfig(effectiveStatus);
+                  // Find the active pickup auth (PENDING or ACCEPTED)
+                  const activeAuth = pkg.pickup_auths?.find(a =>
+                    a.status === 'ACCEPTED' || a.status === 'PENDING'
+                  );
                   return (
                     <tr key={pkg.package_id} className="hover:bg-muted/20 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs font-semibold">{pkg.package_id}</td>
@@ -106,19 +134,27 @@ export default function AdminPackagesPage() {
                       <td className="px-4 py-3 text-xs text-muted-foreground">{pkg.platform?.name || '—'}</td>
                       <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDateShort(pkg.arrival_datetime)}</td>
                       <td className="px-4 py-3 text-xs whitespace-nowrap">
-                        {deadline ? (
-                          <span className={deadline.color}>{deadline.label}</span>
+                        {getDeadlineCell(pkg)}
+                      </td>
+                      <td className="px-4 py-3 text-xs">
+                        {activeAuth ? (
+                          <div>
+                            <div className="font-medium text-foreground font-mono">{activeAuth.authorized_to}</div>
+                            <div className={`text-xs mt-0.5 capitalize ${activeAuth.status === 'ACCEPTED' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                              {activeAuth.status.toLowerCase()}
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-muted-foreground">{formatDateShort(pkg.pickup_deadline)}</span>
+                          <span className="text-muted-foreground">—</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${status.className}`}>{status.label}</span>
                       </td>
                       <td className="px-4 py-3">
-                        {pkg.status === 'PENDING' && (
+                        {(pkg.status === 'PENDING' || pkg.status === 'OVERDUE') && (
                           <button onClick={() => { setCollectModal({ package_id: pkg.package_id, roll_no: pkg.roll_no }); setCollectRoll(pkg.roll_no); }}
-                            className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg transition-colors font-medium">
+                            className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg transition-colors font-medium whitespace-nowrap">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Collected
                           </button>
                         )}

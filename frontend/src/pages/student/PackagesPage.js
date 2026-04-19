@@ -4,7 +4,7 @@ import { Package, ChevronRight, Search } from 'lucide-react';
 import { packageAPI } from '../../lib/api';
 import { getDeadlineInfo, formatDateShort, getStatusConfig } from '../../lib/utils';
 
-const STATUS_TABS = ['ALL', 'PENDING', 'COLLECTED', 'OVERDUE', 'RETURNING'];
+const STATUS_TABS = ['ALL', 'PENDING', 'COLLECTED', 'OVERDUE'];
 
 export default function PackagesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
