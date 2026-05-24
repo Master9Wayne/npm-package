@@ -167,7 +167,7 @@ The app runs on `http://localhost:3000`.
 
 ## Website Screenshots
 
-### User Side:
+### User Side
 ![Project Screenshot](./screenshots/npm1.jpeg)
 Student Dashboard
 ![Project Screenshot](./screenshots/npm2.jpeg)
@@ -178,7 +178,7 @@ Friends Page
 Notifications Page
 
 
-### Admin Side:
+### Admin Side
 
 ![Project Screenshot](./screenshots/npm5.jpeg)
 Admin Dashboard
