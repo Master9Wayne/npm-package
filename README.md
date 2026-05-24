@@ -165,6 +165,14 @@ The app runs on `http://localhost:3000`.
 
 ---
 
+## Website Screenshots
+
+### User Side:
+
+### Admin Side:
+
+---
+
 ## Team
 - Aradhya Mohapatra — 241CS212
 - Rajsimha MV — 241CS246
