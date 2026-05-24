@@ -168,8 +168,24 @@ The app runs on `http://localhost:3000`.
 ## Website Screenshots
 
 ### User Side:
+![Project Screenshot](./screenshots/npm1.jpeg)
+Student Dashboard
+![Project Screenshot](./screenshots/npm2.jpeg)
+Package Page
+![Project Screenshot](./screenshots/npm3.jpeg)
+Friends Page
+![Project Screenshot](./screenshots/npm4.jpeg)
+Notifications Page
+
 
 ### Admin Side:
+
+![Project Screenshot](./screenshots/npm5.jpeg)
+Admin Dashboard
+![Project Screenshot](./screenshots/npm6.jpeg)
+All Packages Table
+![Project Screenshot](./screenshots/npm7.jpeg)
+Admnin Interface for logging parcels
 
 ---
 
