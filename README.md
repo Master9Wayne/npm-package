@@ -1,6 +1,8 @@
 # NPM — NITK Package Manager
 
-A hostel parcel management system for NITK Surathkal.
+## Overview
+
+NPM (NITK Package Manager) is a hostel parcel management system built for NITK Surathkal, developed using Node.js, Express, React, and MySQL (via Prisma ORM). It allows hostel administrators to log incoming packages, notifies students when their parcels arrive, and enables students to authorize friends to collect deliveries on their behalf.
 
 ---
 
@@ -160,32 +162,34 @@ The app runs on `http://localhost:3000`.
 
 ## Tech Stack
 
-**Backend:** Node.js, Express.js, Prisma ORM, MySQL, JWT, Twilio, node-cron  
-**Frontend:** React 18, React Router v6, Tailwind CSS, Axios, Lucide React, date-fns
+| Layer | Technologies |
+|---|---|
+| Backend | Node.js, Express.js, Prisma ORM, MySQL, JWT, Twilio, node-cron |
+| Frontend | React 18, React Router v6, Tailwind CSS, Axios, Lucide React, date-fns |
 
 ---
 
 ## Website Screenshots
 
 ### User Side
-![Project Screenshot](./screenshots/npm1.jpeg)
-* Student Dashboard
-![Project Screenshot](./screenshots/npm2.jpeg)
-* Package Page
-![Project Screenshot](./screenshots/npm3.jpeg)
-* Friends Page
-![Project Screenshot](./screenshots/npm4.jpeg)
-* Notifications Page
 
+| Student Dashboard | Package Page |
+|---|---|
+| ![Project Screenshot](./screenshots/npm1.jpeg) | ![Project Screenshot](./screenshots/npm2.jpeg) |
+
+| Friends Page | Notifications Page |
+|---|---|
+| ![Project Screenshot](./screenshots/npm3.jpeg) | ![Project Screenshot](./screenshots/npm4.jpeg) |
 
 ### Admin Side
 
-![Project Screenshot](./screenshots/npm5.jpeg)
-* Admin Dashboard
-![Project Screenshot](./screenshots/npm6.jpeg)
-* All Packages Table
-![Project Screenshot](./screenshots/npm7.jpeg)
-* Admin Interface for logging parcels
+| Admin Dashboard | All Packages Table |
+|---|---|
+| ![Project Screenshot](./screenshots/npm5.jpeg) | ![Project Screenshot](./screenshots/npm6.jpeg) |
+
+| Admin Interface for logging parcels |
+|---|
+| ![Project Screenshot](./screenshots/npm7.jpeg) |
 
 ---
 
