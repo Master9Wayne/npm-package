@@ -126,7 +126,7 @@ EXIT;
 
 ### 2.2 Twilio (SMS & OTP)
 
-Twilio is used to send OTP verification SMS messages to students who haven't logged in for 30+ days. **In development mode, OTPs are just printed to the terminal console — you don't actually need a real Twilio account to test the app locally.**
+Twilio is used to send OTP verification SMS messages to students who haven't logged in for 30+ days. In development mode, OTPs are printed to the terminal console — a real Twilio account is not required to test the application locally.
 
 #### Option A — Development Mode (No Twilio Account Needed)
 
@@ -143,7 +143,7 @@ Leave the Twilio variables as placeholder strings — they won't be called.
 
 #### Option B — Real Twilio Account (for production or real SMS testing)
 
-If you want actual SMS delivery:
+If actual SMS delivery is required:
 
 **Step 1 — Create a free Twilio account:**
 - Go to: https://www.twilio.com/try-twilio
@@ -344,7 +344,7 @@ Copy the output and paste it as your `JWT_SECRET`.
 
 ### 4.3 Create the MySQL Database
 
-If you haven't already done step 2.1, do it now. The `DATABASE_URL` in your `.env` must point to an existing database. Prisma will not create the database itself — only the tables inside it.
+If step 2.1 has not already been completed, do it now. The `DATABASE_URL` in your `.env` must point to an existing database. Prisma will not create the database itself — only the tables inside it.
 
 Verify your connection string works:
 ```bash
@@ -368,7 +368,7 @@ You will see output like:
 ```
 Applying migration `20240101000000_init`
 Database schema was successfully updated!
-✔ Generated Prisma Client
+Generated Prisma Client
 ```
 
 Then generate the Prisma client (needed for the app to query the database):
@@ -404,7 +404,7 @@ You should see all 9 tables:
 
 ### 4.5 Seed Required Initial Data
 
-The app will not work without at least one hostel and one admin account. The student registration form also requires hostels to be in the database.
+The application will not function without at least one hostel and one admin account. The student registration form also requires hostels to be present in the database.
 
 **Open Prisma Studio (visual database editor):**
 ```bash
@@ -554,7 +554,7 @@ The browser will open `http://localhost:3000` automatically.
 
 ## 6. Database Tables Reference
 
-All tables are created automatically by `npx prisma migrate dev`. Here is every table with its exact column definitions.
+All tables are created automatically by `npx prisma migrate dev`. Below is every table with its exact column definitions.
 
 ### `hostels`
 Stores hostel buildings on campus.
@@ -714,7 +714,7 @@ CREATE TABLE group_members (
 | `ecommerce_platforms` | Populates the platform dropdown when admins log a package arrival (Amazon, Flipkart, etc.). |
 | `packages` | Core table. Every parcel logged by an admin. Tracks status from PENDING → COLLECTED or PENDING → OVERDUE → RETURNING → RETURNED. |
 | `friendships` | Student-to-student friend connections. Status goes PENDING → ACCEPTED or DECLINED. Only ACCEPTED friends can be authorized for pickup. |
-| `pickup_auths` | One row per authorization. When a student says "let my friend collect this", a row is created here. The friend must accept or decline. |
+| `pickup_auths` | One row per authorization. When a student authorizes a friend to collect a package, a row is created here. The friend must accept or decline. |
 | `notifications` | All in-app alerts. Created automatically when packages arrive, deadlines approach, friend requests come in, or pickups are authorized. |
 | `community_groups` | One group is auto-created per hostel when someone first uses community features. Not manually managed. |
 | `group_members` | Tracks whether each student has opted in to seeing friends' packages arriving today. |
@@ -727,23 +727,23 @@ CREATE TABLE group_members (
 
 | Variable | Required | Example | Description |
 |---|---|---|---|
-| `DATABASE_URL` | ✅ Yes | `mysql://npm_user:pass@localhost:3306/npm_db` | MySQL connection string. Format: `mysql://USER:PASS@HOST:PORT/DB_NAME` |
-| `JWT_SECRET` | ✅ Yes | `a3f9b2c1d...` (64 hex chars) | Secret key for signing auth tokens. Must be long and random. Never share this. |
-| `JWT_EXPIRES_IN` | ✅ Yes | `7d` | How long a login session lasts. `7d` = 7 days, `24h` = 24 hours. |
-| `PORT` | ✅ Yes | `5000` | Port the Express server listens on. |
-| `TWILIO_ACCOUNT_SID` | ⚠️ Prod only | `ACxxx...` | From Twilio console. Not used when `NODE_ENV=development`. |
-| `TWILIO_AUTH_TOKEN` | ⚠️ Prod only | `abc123...` | From Twilio console. Not used when `NODE_ENV=development`. |
-| `TWILIO_PHONE_NUMBER` | ⚠️ Prod only | `+14155552671` | The Twilio number that sends SMS. Must include country code. |
-| `FRONTEND_URL` | ✅ Yes | `http://localhost:3000` | Used for CORS. Must match exactly where the React app runs. |
-| `NODE_ENV` | ✅ Yes | `development` | Set to `development` to skip real SMS. Set to `production` for live SMS. |
-| `OTP_EXPIRY_MINUTES` | ✅ Yes | `10` | OTP expires after this many minutes. |
-| `PICKUP_DEADLINE_DAYS` | ✅ Yes | `7` | Default number of days before a package is considered overdue. Admin can override per package. |
+| `DATABASE_URL` | Yes | `mysql://npm_user:pass@localhost:3306/npm_db` | MySQL connection string. Format: `mysql://USER:PASS@HOST:PORT/DB_NAME` |
+| `JWT_SECRET` | Yes | `a3f9b2c1d...` (64 hex chars) | Secret key for signing auth tokens. Must be long and random. Never share this. |
+| `JWT_EXPIRES_IN` | Yes | `7d` | How long a login session lasts. `7d` = 7 days, `24h` = 24 hours. |
+| `PORT` | Yes | `5000` | Port the Express server listens on. |
+| `TWILIO_ACCOUNT_SID` | Production only | `ACxxx...` | From Twilio console. Not used when `NODE_ENV=development`. |
+| `TWILIO_AUTH_TOKEN` | Production only | `abc123...` | From Twilio console. Not used when `NODE_ENV=development`. |
+| `TWILIO_PHONE_NUMBER` | Production only | `+14155552671` | The Twilio number that sends SMS. Must include country code. |
+| `FRONTEND_URL` | Yes | `http://localhost:3000` | Used for CORS. Must match exactly where the React app runs. |
+| `NODE_ENV` | Yes | `development` | Set to `development` to skip real SMS. Set to `production` for live SMS. |
+| `OTP_EXPIRY_MINUTES` | Yes | `10` | OTP expires after this many minutes. |
+| `PICKUP_DEADLINE_DAYS` | Yes | `7` | Default number of days before a package is considered overdue. Admin can override per package. |
 
 ### Frontend `.env` (full reference)
 
 | Variable | Required | Example | Description |
 |---|---|---|---|
-| `REACT_APP_API_URL` | ✅ Yes | `http://localhost:5000/api` | The backend API base URL. All API calls go here. Must NOT have a trailing slash. |
+| `REACT_APP_API_URL` | Yes | `http://localhost:5000/api` | The backend API base URL. All API calls go here. Must NOT have a trailing slash. |
 
 ---
 
@@ -751,36 +751,48 @@ CREATE TABLE group_members (
 
 Work through these in order. Each item confirms the previous steps worked.
 
-**MySQL:**
-- [ ] `mysql --version` prints version 8.x
-- [ ] Can log in: `mysql -u npm_user -p npm_db` without errors
-- [ ] `SHOW TABLES;` shows all 9 tables after running Prisma migrate
+### MySQL
 
-**Backend:**
-- [ ] `npm install` completes without errors inside `backend/`
-- [ ] `.env` file exists in `backend/` (not `.env.example`)
-- [ ] `DATABASE_URL` in `.env` uses the correct username, password, and database name
-- [ ] `npx prisma migrate dev --name init` completes and shows "Applied 1 migration"
-- [ ] `npx prisma generate` completes without errors
-- [ ] At least 1 hostel row exists in the `hostels` table
-- [ ] At least 1 admin row exists in the `admins` table
-- [ ] At least 1 row exists in `ecommerce_platforms`
-- [ ] `npm run dev` prints "Database connected successfully" and "NPM Server running on port 5000"
-- [ ] `curl http://localhost:5000/health` returns `{"status":"ok",...}`
+| Item | Confirms |
+|---|---|
+| `mysql --version` prints version 8.x | MySQL is installed correctly |
+| Can log in: `mysql -u npm_user -p npm_db` without errors | Database user credentials are correct |
+| `SHOW TABLES;` shows all 9 tables after running Prisma migrate | Migrations ran successfully |
 
-**Frontend:**
-- [ ] `npm install` completes without errors inside `frontend/`
-- [ ] `.env` file exists in `frontend/` with `REACT_APP_API_URL=http://localhost:5000/api`
-- [ ] `npm start` opens `http://localhost:3000` in the browser
-- [ ] The landing page loads with no errors in the browser console
-- [ ] The hostel dropdown on the Register page shows the hostels you inserted
+### Backend
 
-**End-to-end test:**
-- [ ] Register a new student through the UI
-- [ ] Log in as that student — dashboard loads
-- [ ] Log in as admin — admin dashboard loads
-- [ ] Admin logs a package arrival for that student's phone number
-- [ ] Student's dashboard shows the pending package
+| Item | Confirms |
+|---|---|
+| `npm install` completes without errors inside `backend/` | Dependencies installed correctly |
+| `.env` file exists in `backend/` (not `.env.example`) | Environment file was created |
+| `DATABASE_URL` in `.env` uses the correct username, password, and database name | Database connection string is correct |
+| `npx prisma migrate dev --name init` completes and shows "Applied 1 migration" | Schema was applied to the database |
+| `npx prisma generate` completes without errors | Prisma client was generated |
+| At least 1 hostel row exists in the `hostels` table | Seed data step was completed |
+| At least 1 admin row exists in the `admins` table | Seed data step was completed |
+| At least 1 row exists in `ecommerce_platforms` | Seed data step was completed |
+| `npm run dev` prints "Database connected successfully" and "NPM Server running on port 5000" | Backend server started correctly |
+| `curl http://localhost:5000/health` returns `{"status":"ok",...}` | API is reachable |
+
+### Frontend
+
+| Item | Confirms |
+|---|---|
+| `npm install` completes without errors inside `frontend/` | Dependencies installed correctly |
+| `.env` file exists in `frontend/` with `REACT_APP_API_URL=http://localhost:5000/api` | Environment file was created |
+| `npm start` opens `http://localhost:3000` in the browser | Frontend dev server started correctly |
+| The landing page loads with no errors in the browser console | Frontend build is functioning |
+| The hostel dropdown on the Register page shows the hostels you inserted | Backend and frontend are connected correctly |
+
+### End-to-End Test
+
+| Item | Confirms |
+|---|---|
+| Register a new student through the UI | Registration flow works |
+| Log in as that student — dashboard loads | Student login and dashboard work |
+| Log in as admin — admin dashboard loads | Admin login and dashboard work |
+| Admin logs a package arrival for that student's phone number | Package logging works |
+| Student's dashboard shows the pending package | Full flow is connected end to end |
 
 ---
 
@@ -879,7 +891,7 @@ kill -9 <PID>
 
 ## Quick Start Summary
 
-Once you have completed the full setup, from any subsequent time forward you only need:
+Once the full setup has been completed, from any subsequent time forward only the following is required:
 
 **Terminal 1 — Backend:**
 ```bash
